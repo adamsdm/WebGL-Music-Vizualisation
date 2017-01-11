@@ -1,0 +1,220 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>WebGL - Flying plane</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <script src="vendor/three.js/three.min.js"></script> 
+    <script src="vendor/three.js/Detector.js"></script>
+    <script src="vendor/threex/THREEx.screenshot.js"></script>
+    <script src="vendor/threex/THREEx.FullScreen.js"></script>
+    <script src="vendor/threex/THREEx.WindowResize.js"></script>
+    <script src="vendor/three.js/TrackballControls.js"></script>
+    <link href="css/main.css" rel="stylesheet" />
+</head>
+
+<body>
+    <!-- three.js container -->
+    <div id="container"></div>
+    <!-- info on screen display -->
+    <div id="info">
+        <div class="top">
+            <h1> Kavinsky - Nightcall </h1>
+		    <canvas class="visualizer"></canvas> </br>
+			<audio id="myAudio" src="audio/Kavinsky-Nightcall.mp3" controls></audio>
+
+
+
+        </div>
+        <div class="bottom" id="inlineDoc">
+            - <i>p</i> for screenshot
+        </div>
+    </div>
+    <script id="vertexShader" type="x-shader/x-vertex">
+    		uniform vec3 lightPos;
+    		uniform float time;
+    		uniform float amp;
+
+    		varying vec3 vNormal;
+    		varying vec3 pos;
+
+    		/*
+			GLSL textureless classic 2D noise "cnoise",
+			with an RSL-style periodic variant "pnoise".
+			Author:  Stefan Gustavson (stefan.gustavson@liu.se)
+			Version: 2011-08-22
+			
+			Many thanks to Ian McEwan of Ashima Arts for the
+			ideas for permutation and gradient selection.
+			
+			Copyright (c) 2011 Stefan Gustavson. All rights reserved.
+			Distributed under the MIT license. See LICENSE file.
+			https://github.com/stegu/webgl-noise
+			*/
+
+			vec4 mod289(vec4 x)
+			{
+			  return x - floor(x * (1.0 / 289.0)) * 289.0;
+			}
+
+			vec4 permute(vec4 x)
+			{
+			  return mod289(((x*34.0)+1.0)*x);
+			}
+
+			vec4 taylorInvSqrt(vec4 r)
+			{
+			  return 1.79284291400159 - 0.85373472095314 * r;
+			}
+
+			vec2 fade(vec2 t) {
+			  return t*t*t*(t*(t*6.0-15.0)+10.0);
+			}
+
+			// Classic Perlin noise
+			float cnoise(vec2 P)
+			{
+			  vec4 Pi = floor(P.xyxy) + vec4(0.0, 0.0, 1.0, 1.0);
+			  vec4 Pf = fract(P.xyxy) - vec4(0.0, 0.0, 1.0, 1.0);
+			  Pi = mod289(Pi); // To avoid truncation effects in permutation
+			  vec4 ix = Pi.xzxz;
+			  vec4 iy = Pi.yyww;
+			  vec4 fx = Pf.xzxz;
+			  vec4 fy = Pf.yyww;
+
+			  vec4 i = permute(permute(ix) + iy);
+
+			  vec4 gx = fract(i * (1.0 / 41.0)) * 2.0 - 1.0 ;
+			  vec4 gy = abs(gx) - 0.5 ;
+			  vec4 tx = floor(gx + 0.5);
+			  gx = gx - tx;
+
+			  vec2 g00 = vec2(gx.x,gy.x);
+			  vec2 g10 = vec2(gx.y,gy.y);
+			  vec2 g01 = vec2(gx.z,gy.z);
+			  vec2 g11 = vec2(gx.w,gy.w);
+
+			  vec4 norm = taylorInvSqrt(vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11)));
+			  g00 *= norm.x;  
+			  g01 *= norm.y;  
+			  g10 *= norm.z;  
+			  g11 *= norm.w;  
+
+			  float n00 = dot(g00, vec2(fx.x, fy.x));
+			  float n10 = dot(g10, vec2(fx.y, fy.y));
+			  float n01 = dot(g01, vec2(fx.z, fy.z));
+			  float n11 = dot(g11, vec2(fx.w, fy.w));
+
+			  vec2 fade_xy = fade(Pf.xy);
+			  vec2 n_x = mix(vec2(n00, n01), vec2(n10, n11), fade_xy.x);
+			  float n_xy = mix(n_x.x, n_x.y, fade_xy.y);
+			  return 2.3 * n_xy;
+			}
+
+			// Classic Perlin noise, periodic variant
+			float pnoise(vec2 P, vec2 rep)
+			{
+			  vec4 Pi = floor(P.xyxy) + vec4(0.0, 0.0, 1.0, 1.0);
+			  vec4 Pf = fract(P.xyxy) - vec4(0.0, 0.0, 1.0, 1.0);
+			  Pi = mod(Pi, rep.xyxy); // To create noise with explicit period
+			  Pi = mod289(Pi);        // To avoid truncation effects in permutation
+			  vec4 ix = Pi.xzxz;
+			  vec4 iy = Pi.yyww;
+			  vec4 fx = Pf.xzxz;
+			  vec4 fy = Pf.yyww;
+
+			  vec4 i = permute(permute(ix) + iy);
+
+			  vec4 gx = fract(i * (1.0 / 41.0)) * 2.0 - 1.0 ;
+			  vec4 gy = abs(gx) - 0.5 ;
+			  vec4 tx = floor(gx + 0.5);
+			  gx = gx - tx;
+
+			  vec2 g00 = vec2(gx.x,gy.x);
+			  vec2 g10 = vec2(gx.y,gy.y);
+			  vec2 g01 = vec2(gx.z,gy.z);
+			  vec2 g11 = vec2(gx.w,gy.w);
+
+			  vec4 norm = taylorInvSqrt(vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11)));
+			  g00 *= norm.x;  
+			  g01 *= norm.y;  
+			  g10 *= norm.z;  
+			  g11 *= norm.w;  
+
+			  float n00 = dot(g00, vec2(fx.x, fy.x));
+			  float n10 = dot(g10, vec2(fx.y, fy.y));
+			  float n01 = dot(g01, vec2(fx.z, fy.z));
+			  float n11 = dot(g11, vec2(fx.w, fy.w));
+
+			  vec2 fade_xy = fade(Pf.xy);
+			  vec2 n_x = mix(vec2(n00, n01), vec2(n10, n11), fade_xy.x);
+			  float n_xy = mix(n_x.x, n_x.y, fade_xy.y);
+			  return 2.3 * n_xy;
+			}
+
+			//Vertex main
+			void main( void ) {
+
+				float eleMult = amp/5.0;
+
+
+				vNormal = normal;
+
+				vec2 vPos = uv+vec2(0.0, time/20.0);
+
+				float lfnoise = pnoise(10.0*vPos, vec2(10.0));
+				float hfnoise = pnoise(40.0*vPos, vec2(10.0));
+
+
+				lfnoise = max(0.0, lfnoise);
+				hfnoise = max(0.0, hfnoise);
+
+
+				pos = 8.0*lfnoise+position+normal*eleMult*lfnoise;
+				pos+= 1.0*(position+normal*eleMult*hfnoise);
+			
+
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( pos, 1.0 );
+
+			}
+
+	</script>
+
+    <script id="fragmentShader" type="x-shader/x-fragment">
+    		uniform vec3 lightPos;
+
+    		varying vec3 vNormal;
+    		varying vec3 pos;
+    		uniform float amp;
+
+			void main( void ) {
+
+				vec3 light = normalize(lightPos);
+				float ka = 0.4;
+				float kd = 1.0;
+				//vec3 groundColor = vec3(1.0, 1.0, 0.75);
+				vec3 groundColor = vec3(0.3, 0.4, 1.0);
+				vec3 pinkColor = vec3(1.0, 0.0, 1.0);
+
+				groundColor = mix(groundColor, pinkColor, smoothstep(0.0, 10.0, pos.z));
+				
+				vec3 dx = dFdx(pos);
+				vec3 dy = dFdy(pos);
+				vec3 newNormal = normalize(cross(dx, dy));
+				
+				vec3 ambient = ka * groundColor;
+				vec3 diffuse = kd * groundColor * max(0.0, dot(newNormal, light));
+
+				vec3 finalColor = ambient+diffuse;
+
+				gl_FragColor = vec4( finalColor, 1.0 );
+
+			}
+	</script>
+	
+	<script src="js/app.js"></script>
+
+</body>
+
+</html>
