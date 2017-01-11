@@ -1,6 +1,5 @@
-
-
     var canvas = document.querySelector('.visualizer');
+
 
 
     var canvasCtx = canvas.getContext("2d");
@@ -48,8 +47,11 @@
             var barHeight;
             var x = 0;
             
-            var bufferSample = bufferLength-17;
-            bassAmplitude = dataArray[bufferSample]; 
+
+
+            var bufferSample = bufferLength-30;
+            //bassAmplitude = dataArray[bufferSample]; 
+            bassAmplitude = dataArray.reduce((pv, cv) => pv+cv*1.2, 0)*0.02;
 
 
             uniforms.amp.value = bassAmplitude;
@@ -192,6 +194,7 @@
 
         // create a scene
         scene = new THREE.Scene();
+        console.log(scene);
 
         // put a camera in the scene
         camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 10000);
