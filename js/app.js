@@ -17,12 +17,13 @@
         var audio = document.getElementById('myAudio');
         var analyser = audioCtx.createAnalyser();
 
+
+        console.log(audio.src);
+
         // we have to connect the MediaElementSource with the analyser 
         var audioSrc = audioCtx.createMediaElementSource(audio);
         audioSrc.connect(analyser);
         audioSrc.connect(audioCtx.destination);
-
-        console.log(audioSrc);
 
 
      // Process
@@ -47,11 +48,17 @@
             var barHeight;
             var x = 0;
             
+            //Sums all elements in dataArray
+            //bassAmplitude = dataArray.reduce((pv, cv) => pv+cv*1.2, 0)*0.02;
 
+            //Only sums 2nd half elements, or the low frequencies
+            bassAmplitude = 0;
+            for(var i=dataArray.length/2; i<dataArray.length; i++){
+                bassAmplitude += dataArray[i];
+            }
 
-            var bufferSample = bufferLength-30;
-            //bassAmplitude = dataArray[bufferSample]; 
-            bassAmplitude = dataArray.reduce((pv, cv) => pv+cv*1.2, 0)*0.02;
+            bassAmplitude*=0.08;
+
 
 
             uniforms.amp.value = bassAmplitude;
@@ -59,10 +66,6 @@
             for(var i = 0; i < bufferLength; i++) {
                 barHeight = dataArray[i];
                 canvasCtx.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
-
-                if(i==bufferSample)
-                    canvasCtx.fillStyle = 'rgb(0,255,0)';
-
 
                 canvasCtx.fillRect(x,HEIGHT-barHeight/2,barWidth,barHeight/2);
 
@@ -90,13 +93,12 @@
     //*****************//
     // ****THREE JS ***//
     //*****************//
+    
     var stats, scene, renderer, composer;
     var camera, cameraControls;
 
     var time;
     var startTime = new Date().getTime();
-
-    
 
 
 
@@ -106,24 +108,13 @@
     function init() {
 
         initScene();
+        postprocessing();
         addLights();
         addObjects();
 
-        time = 0;
 
-        /*
-        // postprocessing
-        // https://github.com/mrdoob/three.js/blob/master/examples/webgl_postprocessing.html
-        composer = new THREE.EffectComposer( renderer );
-        composer.addPass( new THREE.RenderPass( scene, camera ) );
-        var effect = new THREE.ShaderPass( THREE.DotScreenShader );
-        effect.uniforms[ 'scale' ].value = 4;
-        composer.addPass( effect );
-        var effect = new THREE.ShaderPass( THREE.RGBShiftShader );
-        effect.uniforms[ 'amount' ].value = 0.0015;
-        effect.renderToScreen = true;
-        composer.addPass( effect );
-        */
+
+        time = 0;
     }
 
 
@@ -139,20 +130,50 @@
         uniforms.time = {type: 'v3',        value: 1.0};
         uniforms.amp = {type: 'f',          value:0.0}
 
-        
-        var groundMaterial = new THREE.ShaderMaterial( {
-                    uniforms: uniforms,
+        // Create two uniform arrays to get different colors on two materials, ugly but works         
+        WFUniforms = {};
+        NoWFUniforms = {};
+
+        WFUniforms = Object.assign({}, uniforms, 
+            {
+                color1:     {type: 'v3',    value: [0.3, 0.4, 1.0] },
+                color2:     {type: 'v3',    value: [1.0, 0.0, 1.0] },
+            }
+        );
+
+        NoWFUniforms = Object.assign({}, uniforms, 
+            {
+                color1:     {type: 'v3',    value: [0.0, 0.0, 0.0] }, 
+                color2:     {type: 'v3',    value: [0.0, 0.0, 0.0] }, 
+            }
+        );
+
+        var groundMaterialWF = new THREE.ShaderMaterial( {
+                    uniforms: WFUniforms,
                     vertexShader: document.getElementById( 'vertexShader' ).textContent,
                     fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
                     wireframe: true,
                     derivatives: true
             } );
+        var groundMaterial = new THREE.ShaderMaterial( {
+                    uniforms: NoWFUniforms,
+                    vertexShader: document.getElementById( 'vertexShader' ).textContent,
+                    fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
+                    derivatives: true
+            } );
         
+        // TEMP
+        var material = new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true, wireframeLinewidth: 1, side: THREE.DoubleSide } );
+        var planeMesh = THREE.SceneUtils.createMultiMaterialObject( geometry, [
+            groundMaterialWF,
+            groundMaterial
+        ]);
 
-        
-        planeMesh = new THREE.Mesh(geometry, groundMaterial);
 
-        planeMesh.position.y = -1.9
+
+        //planeMesh = new THREE.Mesh(geometry, groundMaterial);
+
+        planeMesh.position.y = -60 //-1.9
         planeMesh.rotation.x = -Math.PI / 2;
 
         scene.add(planeMesh);
@@ -178,14 +199,16 @@
 
 
     function initScene() {
+        
         if (Detector.webgl) {
             renderer = new THREE.WebGLRenderer({
                 antialias: true, // to get smoother output
-                preserveDrawingBuffer: true // to allow screenshot
+                preserveDrawingBuffer: true, // to allow screenshot
+                alpha: true //To allow for background
             });
             renderer.setClearColor(0,0,0,0);
         } else {
-            renderer = new THREE.CanvasRenderer();
+            renderer = new THREE.CanvasRenderer({ alpha: true });
         }
 
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -194,27 +217,44 @@
 
         // create a scene
         scene = new THREE.Scene();
-        console.log(scene);
 
         // put a camera in the scene
         camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 10000);
-        camera.position.set(0, 50, 300);
+        camera.position.set(0, 0, 100);
+
+    }
+
+    function postprocessing(){
+        // Postprocessing
+        composer = new THREE.EffectComposer( renderer );
+        composer.addPass( new THREE.RenderPass( scene, camera ) );
 
 
-        scene.add(camera);
+        // Film effect
+        var noiseIntensity = 1.0;
+        var scanlinesIntensity = 1.0;
+        var scanlinesCount = 1024;
+        var grayscale = false;
+
+        var effectFilmBW = new THREE.FilmPass( noiseIntensity, scanlinesIntensity, scanlinesCount, grayscale );
+        composer.addPass(effectFilmBW);
+
+
+        // RGB shift
+        var effect = new THREE.ShaderPass( THREE.RGBShiftShader );
+        effect.uniforms[ 'amount' ].value = 0.0015;
+        effect.renderToScreen = true;
+        composer.addPass( effect );
+
+        console.log(effect);
 
         // create a camera contol
         cameraControls = new THREE.TrackballControls(camera)
 
         // transparently support window resize
         THREEx.WindowResize.bind(renderer, camera);
-        // allow 'p' to make screenshot
-        THREEx.Screenshot.bindKey(renderer);
-        // allow 'f' to go fullscreen where this feature is supported
-        if (THREEx.FullScreen.available()) {
-            THREEx.FullScreen.bindKey();
-            document.getElementById('inlineDoc').innerHTML += "- <i>f</i> for fullscreen";
-        }
+    
+
     }
 
     function addLights() {
@@ -239,6 +279,7 @@
 
         // do the render
         render();
+        
 
     }
 
@@ -248,7 +289,7 @@
         time = (new Date().getTime() - startTime)/1000;
 
         // update camera controls
-        //cameraControls.update();
+        cameraControls.update();
         //console.log(bassAmplitude);
 
         uniforms.time.value = time;
@@ -261,5 +302,6 @@
         })
 
         // actually render the scene
-        renderer.render(scene, camera);
+        composer.render();
+
     }

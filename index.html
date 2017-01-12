@@ -11,24 +11,32 @@
     <script src="vendor/threex/THREEx.FullScreen.js"></script>
     <script src="vendor/threex/THREEx.WindowResize.js"></script>
     <script src="vendor/three.js/TrackballControls.js"></script>
+
+	<script src="js/shaders/CopyShader.js"></script>
+	<script src="js/shaders/FilmShader.js"></script>
+	<script src="js/shaders/RGBShiftShader.js"></script>
+
+	<script src="js/postprocessing/EffectComposer.js"></script>
+	<script src="js/postprocessing/RenderPass.js"></script>
+	<script src="js/postprocessing/MaskPass.js"></script>
+	<script src="js/postprocessing/ShaderPass.js"></script>
+	<script src="js/postprocessing/FilmPass.js"></script>
+
+
     <link href="css/main.css" rel="stylesheet" />
 </head>
 
 <body>
-    <!-- three.js container -->
+
     <div id="container"></div>
-    <!-- info on screen display -->
     <div id="info">
         <div class="top">
             <h1> Kavinsky - Nightcall </h1>
 		    <canvas class="visualizer"></canvas> </br>
-			<audio id="myAudio" src="audio/Kavinsky-Nightcall.mp3" controls></audio>
-
-
 
         </div>
         <div class="bottom" id="inlineDoc">
-            - <i>p</i> for screenshot
+            <audio id="myAudio" src="audio/Kavinsky-Nightcall.mp3" controls></audio>
         </div>
     </div>
     <script id="vertexShader" type="x-shader/x-vertex">
@@ -164,11 +172,11 @@
 				vec2 vPos = uv+vec2(0.0, time/20.0);
 
 				float lfnoise = pnoise(10.0*vPos, vec2(10.0));
-				float hfnoise = pnoise(40.0*vPos, vec2(10.0));
+				float hfnoise = pnoise(20.0*vPos, vec2(10.0));
 
 
-				lfnoise = max(0.0, lfnoise);
-				hfnoise = max(0.0, hfnoise);
+				//lfnoise = max(0.0, lfnoise);
+				//hfnoise = max(0.0, hfnoise);
 
 
 				pos = 8.0*lfnoise+position+normal*eleMult*lfnoise;
@@ -188,14 +196,17 @@
     		varying vec3 pos;
     		uniform float amp;
 
+    		uniform vec3 color1;
+    		uniform vec3 color2;
+
 			void main( void ) {
 
 				vec3 light = normalize(lightPos);
 				float ka = 0.4;
 				float kd = 1.0;
 				//vec3 groundColor = vec3(1.0, 1.0, 0.75);
-				vec3 groundColor = vec3(0.3, 0.4, 1.0);
-				vec3 pinkColor = vec3(1.0, 0.0, 1.0);
+				vec3 groundColor = color1;
+				vec3 pinkColor = color2;
 
 				groundColor = mix(groundColor, pinkColor, smoothstep(0.0, 10.0, pos.z));
 				
