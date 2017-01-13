@@ -103,6 +103,8 @@
     var time;
     var startTime = new Date().getTime();
 
+    const PYRAMID_SCALE = 200;
+
 
 
     if (!init()) animate();
@@ -124,7 +126,7 @@
     function addObjects() {
 
         // Ground
-        const GROUND_DIM = 1000;
+        const GROUND_DIM = 4000;
         const GROUND_SQUARES = 100;
 
         var geometry = new THREE.PlaneGeometry(GROUND_DIM, GROUND_DIM, GROUND_SQUARES, GROUND_SQUARES);
@@ -173,7 +175,7 @@
         ]);
 
 
-        planeMesh.position.y = -60 //-1.9
+        planeMesh.position.y = -60; //-1.9
         planeMesh.rotation.x = -Math.PI / 2;
 
         scene.add(planeMesh);
@@ -204,12 +206,13 @@
         pyramidMesh = new THREE.Mesh( pyramidGeometry, pyramidMaterial );
         scene.add( pyramidMesh );
 
-        pyramidMesh.scale.set(100,100,100);
-        pyramidMesh.position.set(0, -60, -1*GROUND_DIM-140);
+        pyramidMesh.scale.set(PYRAMID_SCALE,PYRAMID_SCALE,PYRAMID_SCALE);
+        pyramidMesh.position.set(0, -60, -1*GROUND_DIM/2);
+        pyramidMesh.position.z -= Math.sqrt(2*Math.pow(PYRAMID_SCALE,2));
 
 
         //Background stars
-
+        /** TODO **/
 
 
     }
@@ -284,9 +287,10 @@
     }
 
     function updateObjects(){
+
         // Pyramid
         pyramidMesh.rotation.y += 0.0002*uniforms.lfAmp.value;
-        pyramidMesh.scale.y = 100 + 0.1*uniforms.lfAmp.value;
+        pyramidMesh.scale.y = PYRAMID_SCALE + 0.1*uniforms.lfAmp.value;
 
         //Song title
         var shadowDisp = -0.0005*uniforms.lfAmp.value;

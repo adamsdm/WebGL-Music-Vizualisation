@@ -177,10 +177,10 @@
 				lfnoise = max(0.0, lfnoise);
 				hfnoise = max(0.0, hfnoise);
 
+				pos = position;
 
-				pos = 8.0*lfnoise+position+normal*LFeleMult*lfnoise;
-				pos+= 1.0*(position+normal*LFeleMult*hfnoise);
-			
+				//pos.y = 8.0*lfnoise+position+normal*LFeleMult*lfnoise;
+				pos.z = 8.0*position.z+LFeleMult*lfnoise;
 
 				gl_Position = projectionMatrix * modelViewMatrix * vec4( pos, 1.0 );
 
