@@ -5,7 +5,7 @@
     var canvasCtx = canvas.getContext("2d");
     const WIDTH = canvas.width;
     const HEIGHT = canvas.height;
-    var lfAmplitude;
+    var lfAmplitude, hfAmplitude;
     var uniforms = {};
 
     window.onload = function() {
@@ -48,20 +48,26 @@
             var barHeight;
             var x = 0;
             
-            //Sums all elements in dataArray
-            //lfAmplitude = dataArray.reduce((pv, cv) => pv+cv*1.2, 0)*0.02;
 
-            //Only sums 2nd half elements, or the low frequencies
+
+
             lfAmplitude = 0;
+            hfAmplitude = 0;
+
+            for(var i=0; i<dataArray.length/2; i++){
+                hfAmplitude += dataArray[i];
+            }
             for(var i=dataArray.length/2; i<dataArray.length; i++){
                 lfAmplitude += dataArray[i];
             }
 
-            lfAmplitude*=0.016;
+            lfAmplitude*=0.020;
+            hfAmplitude*=0.002;
 
 
 
             uniforms.lfAmp.value = lfAmplitude;
+            uniforms.hfAmp.value = hfAmplitude;
 
 
             // Draw freq
@@ -134,7 +140,8 @@
 
         uniforms.lightPos = {type: 'v3',    value: light.position};
         uniforms.time = {type: 'v3',        value: 1.0};
-        uniforms.lfAmp = {type: 'f',          value:0.0}
+        uniforms.lfAmp = {type: 'f',          value:0.0};
+        uniforms.hfAmp = {type: 'f',          value:0.0};
 
         // Create two uniform arrays to get different colors on two materials, ugly but works         
         WFUniforms = {};
@@ -260,18 +267,19 @@
         // Film effect
         var noiseIntensity = 1.0;
         var scanlinesIntensity = 1.0;
-        var scanlinesCount = 1024;
+        var scanlinesCount = 100;
         var grayscale = false;
 
         var effectFilmBW = new THREE.FilmPass( noiseIntensity, scanlinesIntensity, scanlinesCount, grayscale );
-        //composer.addPass(effectFilmBW);
 
 
         // RGB shift
-        var effect = new THREE.ShaderPass( THREE.RGBShiftShader );
-        effect.uniforms[ 'amount' ].value = 0.0015;
-        effect.renderToScreen = true;
-        composer.addPass( effect );
+        var colorShiftEffect = new THREE.ShaderPass( THREE.RGBShiftShader );
+        colorShiftEffect.uniforms[ 'amount' ].value = 0.0015;
+        colorShiftEffect.renderToScreen = true;
+
+        //composer.addPass(effectFilmBW);
+        composer.addPass( colorShiftEffect );
 
         // create a camera contol
         cameraControls = new THREE.TrackballControls(camera)
@@ -296,11 +304,11 @@
 
         // Pyramid
         pyramidMesh.rotation.y += 0.0002*Math.pow(uniforms.lfAmp.value,1.2);
-        pyramidMesh.scale.y = PYRAMID_SCALE + 0.15*uniforms.lfAmp.value;
+        pyramidMesh.scale.y = PYRAMID_SCALE + 0.6*uniforms.lfAmp.value;
 
         //Song title
-        var shadowDisp = -0.0005*uniforms.lfAmp.value;
-        document.getElementById("songTitle").style.textShadow = String(shadowDisp)+"em "+ String(-shadowDisp) +"em 0em #FF00FF";
+        //var shadowDisp = -0.0005*uniforms.lfAmp.value;
+        //document.getElementById("songTitle").style.textShadow = String(shadowDisp)+"em "+ String(-shadowDisp) +"em 0em #FF00FF";
     }
 
 
@@ -340,6 +348,6 @@
         })
 
         // actually render the scene
-        composer.render();
-
+        //composer.render(); //render with post processing
+        renderer.render( scene, camera ); // render without post process
     }

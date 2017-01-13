@@ -43,6 +43,7 @@
     		uniform vec3 lightPos;
     		uniform float time;
     		uniform float lfAmp;
+    		uniform float hfAmp;
 
     		varying vec3 vNormal;
     		varying vec3 pos;
@@ -178,8 +179,9 @@
 
 				pos = position;
 
-				pos.z += 2.0*lfAmp*lfnoise;
-				//pos.z += 1.0*lfAmp*hfnoise;
+				float finalNoise = 2.0*lfAmp*lfnoise + 4.0*lfnoise*hfAmp*hfnoise;
+
+				pos.z += finalNoise;
 
 				gl_Position = projectionMatrix * modelViewMatrix * vec4( pos, 1.0 );
 

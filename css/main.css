@@ -51,10 +51,12 @@ audio{
 }
 
 #songTitle {
-	font-size: 92px;
+	font-size: 70px;
     font-family: lazer;
     color: #4D66FF;
 
+    
+    text-shadow: #EEEE00 0 0 10px, #FF0000 5px 5px 0px;
     /*
     background: -webkit-linear-gradient(#FF00FF, #4D66FF);
     -webkit-background-clip: text;
