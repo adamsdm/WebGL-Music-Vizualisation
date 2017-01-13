@@ -194,16 +194,22 @@
         ];
 
         pyramidGeometry.faces = [
-            new THREE.Face3( 0, 1, 2 ),
-            new THREE.Face3( 0, 2, 3 ),
+
             new THREE.Face3( 1, 0, 4 ),
             new THREE.Face3( 2, 1, 4 ),
             new THREE.Face3( 3, 2, 4 ),
             new THREE.Face3( 0, 3, 4 )
         ];  
         
-        var pyramidMaterial = new THREE.MeshBasicMaterial( { wireframe: true, color: '#FF00FF' } );
-        pyramidMesh = new THREE.Mesh( pyramidGeometry, pyramidMaterial );
+        console.log(pyramidGeometry.faces);
+
+        // Pyramid
+        var geo = new THREE.EdgesGeometry( pyramidGeometry ); 
+        var mat = new THREE.LineBasicMaterial( { color: 0xFF00FF, linewidth: 2 } );
+        pyramidMesh = new THREE.LineSegments( geo, mat );
+
+
+
         scene.add( pyramidMesh );
 
         pyramidMesh.scale.set(PYRAMID_SCALE,PYRAMID_SCALE,PYRAMID_SCALE);
@@ -289,8 +295,8 @@
     function updateObjects(){
 
         // Pyramid
-        pyramidMesh.rotation.y += 0.0002*uniforms.lfAmp.value;
-        pyramidMesh.scale.y = PYRAMID_SCALE + 0.1*uniforms.lfAmp.value;
+        pyramidMesh.rotation.y += 0.0002*Math.pow(uniforms.lfAmp.value,1.2);
+        pyramidMesh.scale.y = PYRAMID_SCALE + 0.15*uniforms.lfAmp.value;
 
         //Song title
         var shadowDisp = -0.0005*uniforms.lfAmp.value;

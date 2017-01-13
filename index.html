@@ -164,14 +164,13 @@
 			//Vertex main
 			void main( void ) {
 
-				float LFeleMult = lfAmp;
 
 				vNormal = normal;
 
 				vec2 vPos = uv+vec2(0.0, time/10.0);
 
 				float lfnoise = pnoise(10.0*vPos, vec2(10.0));
-				float hfnoise = pnoise(20.0*vPos, vec2(10.0));
+				float hfnoise = pnoise(60.0*vPos, vec2(10.0));
 
 
 				lfnoise = max(0.0, lfnoise);
@@ -179,8 +178,8 @@
 
 				pos = position;
 
-				//pos.y = 8.0*lfnoise+position+normal*LFeleMult*lfnoise;
-				pos.z = 8.0*position.z+LFeleMult*lfnoise;
+				pos.z += 2.0*lfAmp*lfnoise;
+				//pos.z += 1.0*lfAmp*hfnoise;
 
 				gl_Position = projectionMatrix * modelViewMatrix * vec4( pos, 1.0 );
 
