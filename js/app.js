@@ -57,11 +57,11 @@
                 lfAmplitude += dataArray[i];
             }
 
-            lfAmplitude*=0.08;
+            lfAmplitude*=0.016;
 
 
 
-            uniforms.amp.value = lfAmplitude;
+            uniforms.lfAmp.value = lfAmplitude;
 
 
             // Draw freq
@@ -132,7 +132,7 @@
 
         uniforms.lightPos = {type: 'v3',    value: light.position};
         uniforms.time = {type: 'v3',        value: 1.0};
-        uniforms.amp = {type: 'f',          value:0.0}
+        uniforms.lfAmp = {type: 'f',          value:0.0}
 
         // Create two uniform arrays to get different colors on two materials, ugly but works         
         WFUniforms = {};
@@ -285,11 +285,11 @@
 
     function updateObjects(){
         // Pyramid
-        pyramidMesh.rotation.y += 0.0002*uniforms.amp.value;
-        pyramidMesh.scale.y = 100 + 0.1*uniforms.amp.value;
+        pyramidMesh.rotation.y += 0.0002*uniforms.lfAmp.value;
+        pyramidMesh.scale.y = 100 + 0.1*uniforms.lfAmp.value;
 
         //Song title
-        var shadowDisp = -0.0005*uniforms.amp.value;
+        var shadowDisp = -0.0005*uniforms.lfAmp.value;
         document.getElementById("songTitle").style.textShadow = String(shadowDisp)+"em "+ String(-shadowDisp) +"em 0em #FF00FF";
     }
 

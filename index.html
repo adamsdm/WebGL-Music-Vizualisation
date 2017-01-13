@@ -36,13 +36,13 @@
 
         </div>
         <div class="bottom" id="inlineDoc">
-            <audio id="myAudio" src="audio/ghostsnstuff.mp3" controls></audio>
+            <audio id="myAudio" src="audio/Kavinsky-Nightcall.mp3" controls></audio>
         </div>
     </div>
     <script id="vertexShader" type="x-shader/x-vertex">
     		uniform vec3 lightPos;
     		uniform float time;
-    		uniform float amp;
+    		uniform float lfAmp;
 
     		varying vec3 vNormal;
     		varying vec3 pos;
@@ -164,8 +164,7 @@
 			//Vertex main
 			void main( void ) {
 
-				float eleMult = amp/5.0;
-
+				float LFeleMult = lfAmp;
 
 				vNormal = normal;
 
@@ -179,8 +178,8 @@
 				hfnoise = max(0.0, hfnoise);
 
 
-				pos = 8.0*lfnoise+position+normal*eleMult*lfnoise;
-				pos+= 1.0*(position+normal*eleMult*hfnoise);
+				pos = 8.0*lfnoise+position+normal*LFeleMult*lfnoise;
+				pos+= 1.0*(position+normal*LFeleMult*hfnoise);
 			
 
 				gl_Position = projectionMatrix * modelViewMatrix * vec4( pos, 1.0 );
@@ -194,7 +193,6 @@
 
     		varying vec3 vNormal;
     		varying vec3 pos;
-    		uniform float amp;
 
     		uniform vec3 color1;
     		uniform vec3 color2;
