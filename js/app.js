@@ -5,7 +5,7 @@
     var canvasCtx = canvas.getContext("2d");
     const WIDTH = canvas.width;
     const HEIGHT = canvas.height;
-    var bassAmplitude;
+    var lfAmplitude;
     var uniforms = {};
 
     window.onload = function() {
@@ -49,20 +49,22 @@
             var x = 0;
             
             //Sums all elements in dataArray
-            //bassAmplitude = dataArray.reduce((pv, cv) => pv+cv*1.2, 0)*0.02;
+            //lfAmplitude = dataArray.reduce((pv, cv) => pv+cv*1.2, 0)*0.02;
 
             //Only sums 2nd half elements, or the low frequencies
-            bassAmplitude = 0;
+            lfAmplitude = 0;
             for(var i=dataArray.length/2; i<dataArray.length; i++){
-                bassAmplitude += dataArray[i];
+                lfAmplitude += dataArray[i];
             }
 
-            bassAmplitude*=0.08;
+            lfAmplitude*=0.08;
 
 
 
-            uniforms.amp.value = bassAmplitude;
+            uniforms.amp.value = lfAmplitude;
 
+
+            // Draw freq
             for(var i = 0; i < bufferLength; i++) {
                 barHeight = dataArray[i];
                 canvasCtx.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
@@ -96,6 +98,7 @@
     
     var stats, scene, renderer, composer;
     var camera, cameraControls;
+    var pyramidMesh;
 
     var time;
     var startTime = new Date().getTime();
@@ -120,6 +123,7 @@
 
     function addObjects() {
 
+        // Ground
         const GROUND_DIM = 1000;
         const GROUND_SQUARES = 100;
 
@@ -163,15 +167,11 @@
             } );
         
         // TEMP
-        var material = new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true, wireframeLinewidth: 1, side: THREE.DoubleSide } );
         var planeMesh = THREE.SceneUtils.createMultiMaterialObject( geometry, [
             groundMaterialWF,
             groundMaterial
         ]);
 
-
-
-        //planeMesh = new THREE.Mesh(geometry, groundMaterial);
 
         planeMesh.position.y = -60 //-1.9
         planeMesh.rotation.x = -Math.PI / 2;
@@ -180,17 +180,35 @@
         
 
 
-        var sunMaterial = new THREE.MeshBasicMaterial();
+        // Background pyramid
+        var pyramidGeometry = new THREE.Geometry();
 
-        var sun = new THREE.Mesh(
-          new THREE.SphereGeometry(10,32,32), sunMaterial);
+        pyramidGeometry.vertices = [
+            new THREE.Vector3(  1, 0, -1 ),
+            new THREE.Vector3( -1, 0, -1 ),
+            new THREE.Vector3( -1, 0, 1 ),
+            new THREE.Vector3( 1, 0, 1 ),
+            new THREE.Vector3( 0, 2, 0 )
+        ];
+
+        pyramidGeometry.faces = [
+            new THREE.Face3( 0, 1, 2 ),
+            new THREE.Face3( 0, 2, 3 ),
+            new THREE.Face3( 1, 0, 4 ),
+            new THREE.Face3( 2, 1, 4 ),
+            new THREE.Face3( 3, 2, 4 ),
+            new THREE.Face3( 0, 3, 4 )
+        ];  
         
+        var pyramidMaterial = new THREE.MeshBasicMaterial( { wireframe: true, color: '#FF00FF' } );
+        pyramidMesh = new THREE.Mesh( pyramidGeometry, pyramidMaterial );
+        scene.add( pyramidMesh );
 
-        sun.position.set(light.position.x,light.position.y, light.position.z ); //Set position the same as the light position
-        scene.add(sun);
+        pyramidMesh.scale.set(100,100,100);
+        pyramidMesh.position.set(0, -60, -1*GROUND_DIM-140);
 
 
-
+        //Background stars
 
 
 
@@ -220,7 +238,7 @@
 
         // put a camera in the scene
         camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 10000);
-        camera.position.set(0, 0, 100);
+        camera.position.set(0, 0, 800);
 
     }
 
@@ -237,7 +255,7 @@
         var grayscale = false;
 
         var effectFilmBW = new THREE.FilmPass( noiseIntensity, scanlinesIntensity, scanlinesCount, grayscale );
-        composer.addPass(effectFilmBW);
+        //composer.addPass(effectFilmBW);
 
 
         // RGB shift
@@ -245,8 +263,6 @@
         effect.uniforms[ 'amount' ].value = 0.0015;
         effect.renderToScreen = true;
         composer.addPass( effect );
-
-        console.log(effect);
 
         // create a camera contol
         cameraControls = new THREE.TrackballControls(camera)
@@ -267,6 +283,16 @@
 
     }
 
+    function updateObjects(){
+        // Pyramid
+        pyramidMesh.rotation.y += 0.0002*uniforms.amp.value;
+        pyramidMesh.scale.y = 100 + 0.1*uniforms.amp.value;
+
+        //Song title
+        var shadowDisp = -0.0005*uniforms.amp.value;
+        document.getElementById("songTitle").style.textShadow = String(shadowDisp)+"em "+ String(-shadowDisp) +"em 0em #FF00FF";
+    }
+
 
 
     // animation loop
@@ -276,6 +302,8 @@
         // - it has to be at the begining of the function
         // - see details at http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
         requestAnimationFrame(animate);
+
+        updateObjects();
 
         // do the render
         render();
@@ -290,8 +318,8 @@
 
         // update camera controls
         cameraControls.update();
-        //console.log(bassAmplitude);
-
+        
+        // Update uniforms
         uniforms.time.value = time;
 
         // animate PointLights

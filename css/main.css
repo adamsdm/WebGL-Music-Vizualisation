@@ -13,12 +13,14 @@ body {
     font-family: arial;
     font-size: 100%;
 
+/*
     background-image: url("http://i.imgur.com/fu5RgsM.jpg");
     background-position: center;
     -webkit-background-size: cover;
        -moz-background-size: cover;
          -o-background-size: cover;
             background-size: cover;
+            */
 }
 
 audio{
@@ -48,16 +50,18 @@ audio{
     right: 5px;
 }
 
-h1 {
+#songTitle {
 	font-size: 92px;
     font-family: lazer;
+    color: #4D66FF;
 
-    text-shadow: 0em 0em 0.5em #D3002B;
-    background: -webkit-linear-gradient(#4D66FF, #FF00FF);
+    /*
+    background: -webkit-linear-gradient(#FF00FF, #4D66FF);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    */
 }
 
 .visualizer{
-    display:none;
+    /*display:none;*/
 }

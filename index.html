@@ -31,12 +31,12 @@
     <div id="container"></div>
     <div id="info">
         <div class="top">
-            <h1> Kavinsky - Nightcall </h1>
+            <h1 id="songTitle"> Kavinsky - Nightcall </h1>
 		    <canvas class="visualizer"></canvas> </br>
 
         </div>
         <div class="bottom" id="inlineDoc">
-            <audio id="myAudio" src="audio/Kavinsky-Nightcall.mp3" controls></audio>
+            <audio id="myAudio" src="audio/ghostsnstuff.mp3" controls></audio>
         </div>
     </div>
     <script id="vertexShader" type="x-shader/x-vertex">
@@ -169,14 +169,14 @@
 
 				vNormal = normal;
 
-				vec2 vPos = uv+vec2(0.0, time/20.0);
+				vec2 vPos = uv+vec2(0.0, time/10.0);
 
 				float lfnoise = pnoise(10.0*vPos, vec2(10.0));
 				float hfnoise = pnoise(20.0*vPos, vec2(10.0));
 
 
-				//lfnoise = max(0.0, lfnoise);
-				//hfnoise = max(0.0, hfnoise);
+				lfnoise = max(0.0, lfnoise);
+				hfnoise = max(0.0, hfnoise);
 
 
 				pos = 8.0*lfnoise+position+normal*eleMult*lfnoise;
