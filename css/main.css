@@ -56,12 +56,12 @@ audio{
     color: #4D66FF;
 
     
-    text-shadow: #EEEE00 0 0 10px, #FF0000 5px 5px 0px;
-    /*
+    /*text-shadow: #EEEE00 0 0 10px, #FF0000 5px 5px 0px;*/
+    
     background: -webkit-linear-gradient(#FF00FF, #4D66FF);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    */
+    
 }
 
 .visualizer{
