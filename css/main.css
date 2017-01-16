@@ -13,14 +13,14 @@ body {
     font-family: arial;
     font-size: 100%;
 
-/*
+
     background-image: url("http://i.imgur.com/fu5RgsM.jpg");
     background-position: center;
     -webkit-background-size: cover;
        -moz-background-size: cover;
          -o-background-size: cover;
             background-size: cover;
-            */
+            
 }
 
 audio{
@@ -65,5 +65,5 @@ audio{
 }
 
 .visualizer{
-    display:none;
+    /*display:none;*/
 }

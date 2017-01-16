@@ -1,80 +1,25 @@
-var canvas = document.querySelector('.visualizer');
-
-var canvasCtx = canvas.getContext("2d");
-var WIDTH = canvas.width;
-var HEIGHT = canvas.height;
-var lfAmplitude, hfAmplitude;
 var uniforms = {};
 uniforms.lfAmp = {};
 uniforms.hfAmp = {};
 
 window.onload = function () {
 
-        var audioCtx = new (window.AudioContext || window.webkitAudioContext)();;
+    var AudioController = new AudioHandler();
+    AudioController.init();
+    update();
 
-        //set up the different audio nodes we will use for the app
-        var audio = document.getElementById('myAudio');
-        var analyser = audioCtx.createAnalyser();
+    function update() {
+        requestAnimationFrame(update);
+        AudioController.update();
+        uniforms.lfAmp.value = AudioController.lfAmplitude;
+        uniforms.hfAmp.value = AudioController.hfAmplitude;
+        AudioController.draw();
+    }
 
-        console.log(audio.src);
-
-        // we have to connect the MediaElementSource with the analyser 
-        var audioSrc = audioCtx.createMediaElementSource(audio);
-        audioSrc.connect(analyser);
-        audioSrc.connect(audioCtx.destination);
-
-        // Process
-        analyser.fftSize = 128;
-        var bufferLength = analyser.frequencyBinCount;
-        console.log(bufferLength);
-        var dataArray = new Uint8Array(bufferLength);
-
-        console.log(dataArray);
-
-        canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
-
-        function draw() {
-                requestAnimationFrame(draw);
-
-                analyser.getByteFrequencyData(dataArray);
-
-                canvasCtx.fillStyle = 'rgb(0, 0, 0)';
-                canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-
-                var barWidth = WIDTH / bufferLength;
-                var barHeight;
-                var x = 0;
-
-                lfAmplitude = 0;
-                hfAmplitude = 0;
-
-                for (var i = 0; i < dataArray.length / 2; i++) {
-                        hfAmplitude += dataArray[i];
-                }
-                for (var i = dataArray.length / 2; i < dataArray.length; i++) {
-                        lfAmplitude += dataArray[i];
-                }
-
-                lfAmplitude *= 0.020;
-                hfAmplitude *= 0.002;
-
-                uniforms.lfAmp.value = lfAmplitude;
-                uniforms.hfAmp.value = hfAmplitude;
-
-                // Draw freq
-                for (var i = 0; i < bufferLength; i++) {
-                        barHeight = dataArray[i];
-                        canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',50,50)';
-
-                        canvasCtx.fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight / 2);
-
-                        x += barWidth + 1;
-                }
-        };
-
-        audio.play();
-        draw();
+    AudioController.audio.play();
+    
 };
+
 
 //*****************//
 // ****THREE JS ***//
@@ -214,10 +159,11 @@ function addObjects() {
         var pyramidGeometry = new THREE.Geometry();
 
         pyramidGeometry.vertices = [new THREE.Vector3(1, 0, -1), new THREE.Vector3(-1, 0, -1), new THREE.Vector3(-1, 0, 1), new THREE.Vector3(1, 0, 1), new THREE.Vector3(0, 2, 0)];
-
         pyramidGeometry.faces = [new THREE.Face3(1, 0, 4), new THREE.Face3(2, 1, 4), new THREE.Face3(3, 2, 4), new THREE.Face3(0, 3, 4)];
 
-        console.log(pyramidGeometry.faces);
+
+
+        console.log(pyramidGeometry.vertices);
 
         // Pyramid
         var geo = new THREE.EdgesGeometry(pyramidGeometry);

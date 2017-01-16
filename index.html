@@ -24,17 +24,19 @@
 	<script src="js/postprocessing/ShaderPass.js"></script>
 	<script src="js/postprocessing/FilmPass.js"></script>
 
+	<script src="js/audio.js"></script>
 
     <link href="css/main.css" rel="stylesheet" />
 </head>
 
 <body>
 
-    <div id="container"></div>
+    <div id="container">
+    	<canvas class="visualizer"></canvas>
+    </div>
     <div id="info">
         <div class="top">
             <h1 id="songTitle"> Kavinsky - Nightcall </h1>
-		    <canvas class="visualizer"></canvas> </br>
 
         </div>
         <div class="bottom" id="inlineDoc">
@@ -170,7 +172,7 @@
 
 				vNormal = normal;
 
-				vec2 vPos = uv+vec2(0.0, time/10.0);
+				vec2 vPos = uv+vec2(0.0, time/6.0);
 
 				float lfnoise = pnoise(10.0*vPos, vec2(10.0));
 				float hfnoise = pnoise(60.0*vPos, vec2(10.0));
@@ -225,7 +227,7 @@
 			}
 	</script>
 	
-	<script src="js/app.min.js"></script>
+	<script src="js/app.js"></script>
 
 </body>
 
