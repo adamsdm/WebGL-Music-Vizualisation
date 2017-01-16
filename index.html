@@ -7,24 +7,26 @@
     <title>WebGL - Flying plane</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <script src="vendor/three.js/three.min.js"></script> 
+    <script src="vendor/three.js/three.min.js"></script>
     <script src="vendor/three.js/Detector.js"></script>
     <script src="vendor/threex/THREEx.screenshot.js"></script>
     <script src="vendor/threex/THREEx.FullScreen.js"></script>
     <script src="vendor/threex/THREEx.WindowResize.js"></script>
     <script src="vendor/three.js/TrackballControls.js"></script>
+    <script src="vendor/three.js/GeometryUtils.js"></script>
 
-	<script src="js/shaders/CopyShader.js"></script>
-	<script src="js/shaders/FilmShader.js"></script>
-	<script src="js/shaders/RGBShiftShader.js"></script>
 
-	<script src="js/postprocessing/EffectComposer.js"></script>
-	<script src="js/postprocessing/RenderPass.js"></script>
-	<script src="js/postprocessing/MaskPass.js"></script>
-	<script src="js/postprocessing/ShaderPass.js"></script>
-	<script src="js/postprocessing/FilmPass.js"></script>
+  	<script src="js/shaders/CopyShader.js"></script>
+  	<script src="js/shaders/FilmShader.js"></script>
+  	<script src="js/shaders/RGBShiftShader.js"></script>
 
-	<script src="js/audio.js"></script>
+  	<script src="js/postprocessing/EffectComposer.js"></script>
+  	<script src="js/postprocessing/RenderPass.js"></script>
+  	<script src="js/postprocessing/MaskPass.js"></script>
+  	<script src="js/postprocessing/ShaderPass.js"></script>
+  	<script src="js/postprocessing/FilmPass.js"></script>
+
+  	<script src="js/audio.js"></script>
 
     <link href="css/main.css" rel="stylesheet" />
 </head>
@@ -57,10 +59,10 @@
 			with an RSL-style periodic variant "pnoise".
 			Author:  Stefan Gustavson (stefan.gustavson@liu.se)
 			Version: 2011-08-22
-			
+
 			Many thanks to Ian McEwan of Ashima Arts for the
 			ideas for permutation and gradient selection.
-			
+
 			Copyright (c) 2011 Stefan Gustavson. All rights reserved.
 			Distributed under the MIT license. See LICENSE file.
 			https://github.com/stegu/webgl-noise
@@ -109,10 +111,10 @@
 			  vec2 g11 = vec2(gx.w,gy.w);
 
 			  vec4 norm = taylorInvSqrt(vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11)));
-			  g00 *= norm.x;  
-			  g01 *= norm.y;  
-			  g10 *= norm.z;  
-			  g11 *= norm.w;  
+			  g00 *= norm.x;
+			  g01 *= norm.y;
+			  g10 *= norm.z;
+			  g11 *= norm.w;
 
 			  float n00 = dot(g00, vec2(fx.x, fy.x));
 			  float n10 = dot(g10, vec2(fx.y, fy.y));
@@ -150,10 +152,10 @@
 			  vec2 g11 = vec2(gx.w,gy.w);
 
 			  vec4 norm = taylorInvSqrt(vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11)));
-			  g00 *= norm.x;  
-			  g01 *= norm.y;  
-			  g10 *= norm.z;  
-			  g11 *= norm.w;  
+			  g00 *= norm.x;
+			  g01 *= norm.y;
+			  g10 *= norm.z;
+			  g11 *= norm.w;
 
 			  float n00 = dot(g00, vec2(fx.x, fy.x));
 			  float n10 = dot(g10, vec2(fx.y, fy.y));
@@ -183,9 +185,11 @@
 
 				pos = position;
 
-				float finalNoise = 2.0*lfAmp*lfnoise + 4.0*lfnoise*hfAmp*hfnoise;
+        // Calculate distance from pos to x=0 to get valley.
+        float distToMid = 1.0+0.003*abs(pos.x);
+				float finalNoise = distToMid*(2.0*lfAmp*lfnoise + 4.0*lfnoise*hfAmp*hfnoise);
 
-				pos.z += finalNoise;
+				pos = pos + normal*finalNoise;
 
 				gl_Position = projectionMatrix * modelViewMatrix * vec4( pos, 1.0 );
 
@@ -212,11 +216,11 @@
 				vec3 pinkColor = color2;
 
 				groundColor = mix(groundColor, pinkColor, smoothstep(0.0, 10.0, pos.z));
-				
+
 				vec3 dx = dFdx(pos);
 				vec3 dy = dFdy(pos);
 				vec3 newNormal = normalize(cross(dx, dy));
-				
+
 				vec3 ambient = ka * groundColor;
 				vec3 diffuse = kd * groundColor * max(0.0, dot(newNormal, light));
 
@@ -226,7 +230,7 @@
 
 			}
 	</script>
-	
+
 	<script src="js/app.js"></script>
 
 </body>
