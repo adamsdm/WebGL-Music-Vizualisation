@@ -3,21 +3,38 @@ uniforms.lfAmp = {};
 uniforms.hfAmp = {};
 var AudioController;
 
-window.onload = function () {
+require('clubber');
 
+window.onload = function () {
+    // Clubber testing
+    var clubber = new Clubber({
+        size: 2048, // Samples for the fourier transform. The produced linear frequency bins will be 1/2 that.
+        mute: false // whether the audio source should be connected to web audio context destination.
+    });
+
+    // Specify the audio source to analyse. Can be an audio/video element or an instance of AudioNode.
+    clubber.listen( document.getElementById('myAudio') );
+
+
+    if (!init()) animate();
+    /*
     var AudioController = new AudioHandler();
     AudioController.init();
     update();
 
     function update() {
         requestAnimationFrame(update);
+        clubber.update(); // currentTime is optional and specified in ms.
+        console.log(clubber.notes);
+
         AudioController.update();
         uniforms.lfAmp.value = AudioController.lfAmplitude;
         uniforms.hfAmp.value = AudioController.hfAmplitude;
         AudioController.draw();
     }
+    */
     if (!init()) animate();
-    AudioController.audio.play();
+    //AudioController.audio.play();
 
 };
 
@@ -42,7 +59,7 @@ var PYRAMID_SCALE = 200;
 window.addEventListener( 'resize', onWindowResize, false );
 
 function init() {
-    
+
         initScene();
         postprocessing();
         addLights();
@@ -188,7 +205,7 @@ function addObjects() {
         //Background stars
         var sprite = new THREE.TextureLoader().load( "images/ball.png" );
         planetGeometry = new THREE.Geometry();
-				for ( i = 0; i < 300; i ++ ) {
+				for ( var i = 0; i < 300; i ++ ) {
 					var planetVertex = new THREE.Vector3();
 					planetVertex.x = (-1 + 2*Math.random())*1.4*window.innerWidth;
 					planetVertex.y = (-1 + 2*Math.random())*1.4*window.innerWidth;
