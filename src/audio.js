@@ -4,9 +4,9 @@ function AudioHandler() {
     this.WIDTH = this.canvas.width;
     this.HEIGHT = this.canvas.height;
     this.canvasCtx = this.canvas.getContext("2d");
-    this.lfAmplitude; 
+    this.lfAmplitude;
     this.hfAmplitude;
-    
+
     this.audioCtx;
     this.audio;
     this.analyser;
@@ -18,11 +18,17 @@ AudioHandler.prototype.init = function() {
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();;
 
     //set up the different audio nodes we will use for the app
+
+
     this.audio = document.getElementById('myAudio');
     this.analyser = this.audioCtx.createAnalyser();
 
+    /*
+    this.url = 'http://api.soundcloud.com/tracks/6981096/stream' + '?client_id=5c6ceaa17461a1c79d503b345a26a54e';
+    this.audio.src = url;
+    */
 
-    // we have to connect the MediaElementSource with the analyser 
+    // we have to connect the MediaElementSource with the analyser
     this.audioSrc = this.audioCtx.createMediaElementSource(this.audio);
     this.audioSrc.connect(this.analyser);
     this.audioSrc.connect(this.audioCtx.destination);
@@ -44,23 +50,23 @@ AudioHandler.prototype.update = function() {
         this.canvasCtx.fillStyle = 'rgb(0, 0, 0)';
         this.canvasCtx.fillRect(0, 0, this.WIDTH, this.HEIGHT);
 
-        
+
         this.barWidth = this.WIDTH /  this.bufferLength;
         this.barHeight;
-        
+
 
         this.lfAmplitude = 0;
         this.hfAmplitude = 0;
 
-        
-        
+
+
         for (var i = 0; i < this.dataArray.length / 2; i++) {
                 this.hfAmplitude += this.dataArray[i];
         }
         for (var i = this.dataArray.length / 2; i < this.dataArray.length; i++) {
                 this.lfAmplitude += this.dataArray[i];
         }
-        
+
         this.lfAmplitude *= 0.020;
         this.hfAmplitude *= 0.002;
 };

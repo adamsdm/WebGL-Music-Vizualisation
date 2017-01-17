@@ -10,7 +10,7 @@ body {
     color: #222;
     background-color: black;
 
-    font-family: arial;
+    font-family: monospace;
     font-size: 100%;
 
 
@@ -25,6 +25,10 @@ body {
 
 audio{
     width: 100vw;
+    z-index: 9999;
+}
+
+#info {
     z-index: 9999;
 }
 
@@ -56,14 +60,33 @@ audio{
     font-family: lazer;
     color: #4D66FF;
 
-
     /*text-shadow: #EEEE00 0 0 10px, #FF0000 5px 5px 0px;*/
-
     background: -webkit-linear-gradient(#FF00FF, #4D66FF);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-
 }
+
+#controls {
+    position:absolute;
+    top: 20px;
+    left: 10px;
+}
+
+
+#controls button {
+    font-family: monospace;
+    color: gray;
+    border: 3px solid gray;
+    padding: 0.4em;
+    border-radius: 1em;
+    background-color: rgba(0,0,0,0);
+    transition: 0.1s linear;
+}
+#controls button:hover {
+    border-radius: 0.5em 0.5em 0em 0em;
+    background-color: rgba(255,255,255,0.3);
+}
+
 
 .visualizer{
     display:none;

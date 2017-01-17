@@ -26,8 +26,6 @@
   	<script src="src/vendor/postprocessing/ShaderPass.js"></script>
   	<script src="src/vendor/postprocessing/FilmPass.js"></script>
 
-  	<script src="src/audio.js"></script>
-
     <link href="css/main.css" rel="stylesheet" />
 </head>
 
@@ -38,11 +36,14 @@
     </div>
     <div id="info">
         <div class="top">
-            <h1 id="songTitle"> Kavinsky - Nightcall </h1>
+            <div id="controls">
+                <button id="change-song">Change song</button>
 
+            </div>
+            <h1 id="songTitle"></h1>
         </div>
         <div class="bottom" id="inlineDoc">
-            <audio id="myAudio" src="audio/Kavinsky-Nightcall.mp3" controls></audio>
+            <!--<audio id="myAudio" src="http://api.soundcloud.com/tracks/6981096/stream?client_id=5c6ceaa17461a1c79d503b345a26a54e" controls></audio>-->
         </div>
     </div>
     <script id="vertexShader" type="x-shader/x-vertex">

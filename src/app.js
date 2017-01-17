@@ -4,43 +4,124 @@ uniforms.hfAmp = {};
 var AudioController;
 
 require('clubber');
+var $ = require('jquery');
+
+//*****************//
+//***** AUDIO *****//
+//*****************//
 
 window.onload = function () {
-    // Clubber testing
+
+    var songs = {};
+    songs.hydrogen = {};
+    songs.tempSong = {};
+    songs.hydrogen.url = 'http://api.soundcloud.com/tracks/22099269/stream' + '?client_id=5c6ceaa17461a1c79d503b345a26a54e';
+    songs.tempSong.url = 'http://api.soundcloud.com/tracks/49931/stream' + '?client_id=5c6ceaa17461a1c79d503b345a26a54e';
+
+
+    // Alternative http://stackoverflow.com/questions/18148488/how-can-i-do-a-resolve-with-the-soundcloud-javascript-sdk
+    var songs = {
+        hydrogen: {
+            url: 'http://api.soundcloud.com/tracks/22099269/stream' + '?client_id=5c6ceaa17461a1c79d503b345a26a54e',
+            artist: 'M.O.O.N',
+            title: 'Hydrogen'
+        },
+        nightcall: {
+            url: 'http://api.soundcloud.com/tracks/5829554/stream' + '?client_id=5c6ceaa17461a1c79d503b345a26a54e',
+            artist: 'Kavinsky',
+            title: 'Nightcall'
+        },
+        brokenSong: {}
+    };
+
+    // curl -v 'http://api.soundcloud.com/resolve?url=https://soundcloud.com/recordmakers/11-kavinsky-nightcall-1&client_id=5c6ceaa17461a1c79d503b345a26a54e'
+    var audio = new Audio();
+    //audio.src = songs.nightcall.url;
+    setSong(songs.hydrogen);
+
+    audio.controls = true;
+    audio.autoplay = false;
+    audio.crossOrigin = "anonymous";
+    document.getElementById('inlineDoc').appendChild(audio);
+
+
+
+    var context = new (window.AudioContext || window.webkitAudioContext)();
+
+    window.addEventListener('load', function(e) {
+      var source = context.createMediaElementSource(audio);
+      source.connect(context.destination);
+    }, false);
+
+
     var clubber = new Clubber({
         size: 2048, // Samples for the fourier transform. The produced linear frequency bins will be 1/2 that.
         mute: false // whether the audio source should be connected to web audio context destination.
     });
 
     // Specify the audio source to analyse. Can be an audio/video element or an instance of AudioNode.
-    clubber.listen( document.getElementById('myAudio') );
+    clubber.listen( audio );
 
-
-    if (!init()) animate();
-    /*
-    var AudioController = new AudioHandler();
-    AudioController.init();
     update();
+
 
     function update() {
         requestAnimationFrame(update);
         clubber.update(); // currentTime is optional and specified in ms.
-        console.log(clubber.notes);
+        //console.log(clubber.notes); // array containing the audio energy per midi note.
 
-        AudioController.update();
-        uniforms.lfAmp.value = AudioController.lfAmplitude;
-        uniforms.hfAmp.value = AudioController.hfAmplitude;
-        AudioController.draw();
+        uniforms.lfAmp.value = 0;
+        uniforms.hfAmp.value = 0;
+
+
+
+        for(var i=0; i<clubber.notes.length/2; i++){
+            uniforms.hfAmp.value += clubber.notes[i];
+        }
+        for(var i=clubber.notes.length/2; i<clubber.notes.length; i++){
+            uniforms.lfAmp.value += clubber.notes[i];
+        }
+
+        uniforms.lfAmp.value *= 0.007;
+        uniforms.hfAmp.value *= 0.0007;
+
     }
-    */
-    if (!init()) animate();
-    //AudioController.audio.play();
+
+
+
+
+    function setSong(song){
+        if(!song.url || !song.title || !song.artist) {
+            console.error("Incorrect song format");
+            return;
+        }
+
+        // Update audio source
+        audio.src = song.url;
+        audio.load();
+
+        // Set title
+        document.getElementById('songTitle').innerHTML = song.artist + ' - ' + song.title;
+
+    }
+
+    //*****************//
+    //*** CONTROLS ****//
+    //*****************//
+    for (var property in songs) {
+        console.log(songs[property]);
+    }
+    document.getElementById('change-song').addEventListener('click', function(event) {
+        setSong(songs.nightcall);
+    });
 
 };
 
 
+
+
 //*****************//
-// ****THREE JS ***//
+//*** THREE JS ****//
 //*****************//
 
 var stats, scene, renderer, composer, light;
@@ -56,6 +137,8 @@ var PYRAMID_SCALE = 200;
 
 
 // init the scene
+if (!init()) animate();
+
 window.addEventListener( 'resize', onWindowResize, false );
 
 function init() {
