@@ -5,7 +5,7 @@ var uniforms = {};
 uniforms.lfAmp = {};
 uniforms.hfAmp = {};
 var AudioController;
-const CLIENT_ID = '5c6ceaa17461a1c79d503b345a26a54e';
+const CLIENT_ID = '56c4f3443da0d6ce6dcb60ba341c4e8d';
 
 //*****************//
 //***** AUDIO *****//
@@ -16,12 +16,12 @@ window.onload = function () {
     // Alternative http://stackoverflow.com/questions/18148488/how-can-i-do-a-resolve-with-the-soundcloud-javascript-sdk
     var songs = {
         hydrogen: {
-            url: 'http://api.soundcloud.com/tracks/22099269/stream' + '?client_id=5c6ceaa17461a1c79d503b345a26a54e',
+            url: 'http://api.soundcloud.com/tracks/22099269/stream?client_id='+CLIENT_ID,
             artist: 'M.O.O.N',
             title: 'Hydrogen'
         },
         nightcall: {
-            url: 'http://api.soundcloud.com/tracks/5829554/stream' + '?client_id=5c6ceaa17461a1c79d503b345a26a54e',
+            url: 'http://api.soundcloud.com/tracks/5829554/stream?client_id='+CLIENT_ID,
             artist: 'Kavinsky',
             title: 'Nightcall'
         },
@@ -354,7 +354,6 @@ function updateObjects() {
         camera.position.x = 20*Math.sin(time+0.05*uniforms.lfAmp.value);
 }
 
-// animation loop
 
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -362,6 +361,7 @@ function onWindowResize() {
     renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
+// animation loop
 function animate() {
         requestAnimationFrame(animate);
         updateObjects();
