@@ -40,11 +40,6 @@ audio{
     text-align: center;
 }
 
-#info a {
-    color: #66F;
-    text-decoration: none;
-}
-
 #info a:hover {
     text-decoration: underline;
 }
@@ -73,21 +68,69 @@ audio{
 }
 
 
-#controls button {
-    font-family: monospace;
-    color: gray;
-    border: 3px solid gray;
-    padding: 0.4em;
-    border-radius: 1em;
-    background-color: rgba(0,0,0,0);
-    transition: 0.1s linear;
-}
-#controls button:hover {
-    border-radius: 0.5em 0.5em 0em 0em;
-    background-color: rgba(255,255,255,0.3);
-}
-
 
 .visualizer{
     display:none;
+}
+
+
+
+/* Dropdown Button */
+.dropbtn {
+   background-color: rgba(0,0,0,0);
+   color: gray;
+   padding: 8px;
+   font-size: 16px;
+   border: 2px solid;
+   border-radius: 10px;
+   cursor: pointer;
+   min-width: 160px;
+   font-family: monospace;
+
+
+}
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {
+    border-radius: 10px 10px 0px 0px;
+    background-color: rgba(100,100,100,0.5);
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    transition: 0.1s linear;
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    border: 2px solid gray;
+    border-top-width: 0px;
+    border-radius: 0px 0px 10px 10px;
+    min-width: 156px;
+    transition: 0.2s linear;
+    background-color: rgba(100,100,100,0.5);
+
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+   color: gray;
+   padding: 12px 16px;
+   text-decoration: none;
+   display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+    color: white;
+    text-decoration: none;
+    background-color: rgba(255,255,255,0.5);
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+   display: block;
 }
