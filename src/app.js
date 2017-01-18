@@ -1,23 +1,17 @@
+require('clubber');
+var $ = require('jquery');
+
 var uniforms = {};
 uniforms.lfAmp = {};
 uniforms.hfAmp = {};
 var AudioController;
-
-require('clubber');
-var $ = require('jquery');
+const CLIENT_ID = '5c6ceaa17461a1c79d503b345a26a54e';
 
 //*****************//
 //***** AUDIO *****//
 //*****************//
 
 window.onload = function () {
-
-    var songs = {};
-    songs.hydrogen = {};
-    songs.tempSong = {};
-    songs.hydrogen.url = 'http://api.soundcloud.com/tracks/22099269/stream' + '?client_id=5c6ceaa17461a1c79d503b345a26a54e';
-    songs.tempSong.url = 'http://api.soundcloud.com/tracks/49931/stream' + '?client_id=5c6ceaa17461a1c79d503b345a26a54e';
-
 
     // Alternative http://stackoverflow.com/questions/18148488/how-can-i-do-a-resolve-with-the-soundcloud-javascript-sdk
     var songs = {
@@ -87,6 +81,28 @@ window.onload = function () {
 
     }
 
+    //soundcloud('https://soundcloud.com/recordmakers/11-kavinsky-nightcall-1');
+
+    // source: https://goo.gl/pV0Aam common.js, #160
+    function soundcloud(url) {
+      load("//api.soundcloud.com/resolve?url=" + encodeURIComponent(url.split("?")[0]) + "&client_id=" + CLIENT_ID).then(function (text) {
+        var data = JSON.parse(text);
+        console.log(data);
+
+        /*
+        if (data.kind !== "track"){
+          alert( "Please provide a track url, " + data.kind + " urls are not supported.");
+          return;
+
+        }
+        info.innerHTML = "<a href='"+data.permalink_url+"' target='_blank'>Listening to "+data.title+" by "+data.user.username+"</a>";
+        localStorage.setItem("soundcloud-track", url);
+        play(data.id);
+      }, function () {
+        alert(url + " is not a valid soundcloud track url.")
+         */
+      })
+    }
 
 
 
