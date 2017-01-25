@@ -192,7 +192,7 @@ function initScene() {
 
         // put a camera in the scene
         camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 10000);
-        camera.position.set(0, 0, 800);
+        camera.position.z = 1200;
 }
 
 function postprocessing() {
@@ -356,7 +356,7 @@ function updateObjects() {
         bgMaterial.color.b = 0.08 + 0.7*uniforms.lfAmp.value/255;
 
         // Camera
-        camera.position.y = 0.6 * uniforms.lfAmp.value;
+        camera.position.y = 10+0.6 * uniforms.lfAmp.value;
         camera.position.x = 20*Math.sin(time+0.05*uniforms.lfAmp.value);
 
         // Song title
