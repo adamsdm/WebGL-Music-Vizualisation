@@ -15,7 +15,7 @@ const CLIENT_ID = 'fay591MRwutHZh1CYuqToQK0LcO1Saxg';
 window.onload = function () {
 
     var audio = new Audio();
-    setSong('https://soundcloud.com/ghostly/com-truise-84-dreamin'); // Set src of audio element to soundcloud stream url
+    setSong('https://soundcloud.com/moon_music/hydrogen'); // Set src of audio element to soundcloud stream url
 
     audio.controls = true;
     audio.autoplay = false;
