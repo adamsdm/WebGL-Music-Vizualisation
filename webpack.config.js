@@ -1,6 +1,8 @@
 module.exports = {
   //define entry point
-  entry: "./src/app.js",
+  entry: {
+      'app': "./src/app.js"
+  },
 
   //define outout point
   output: {

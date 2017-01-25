@@ -1,18 +1,15 @@
 {
   "name": "WebGL-Music-Vizualisation",
-  "version": "1.0.0",
-  "description": "[boilerplate for three.js](https://github.com/jeromeetienne/threejsboilerplate)\r is a template to get you started. You download it and modify it until it fits your needs.\r It is a fast way to start a clean project with [three.js](https://github.com/mrdoob/three.js/).\r It avoids repetitive tasks, following DRY principles.\r It includes various good practices and compatibilities features.\r More details [here](http://learningthreejs.com/blog/2011/12/20/boilerplate-for-three-js/).",
+  "version": "0.9.0",
+  "description": "WebGL music visualization using Ashima's noise",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/adamsdm/WebGL-Music-Vizualisation.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Adam Söderström",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/adamsdm/WebGL-Music-Vizualisation/issues"
   },
@@ -22,11 +19,6 @@
     "babel-loader": "^6.2.10",
     "babel-preset-es2015": "^6.18.0",
     "clubber": "^1.4.1",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^6.1.2",
-    "gulp-connect": "^5.0.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-watch": "^4.3.11",
     "jquery": "^3.1.1"
   }
 }

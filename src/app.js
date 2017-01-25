@@ -5,33 +5,17 @@ var uniforms = {};
 uniforms.lfAmp = {};
 uniforms.hfAmp = {};
 var AudioController;
-const CLIENT_ID = '56c4f3443da0d6ce6dcb60ba341c4e8d';
+const CLIENT_ID = 'fay591MRwutHZh1CYuqToQK0LcO1Saxg';
 
 //*****************//
 //***** AUDIO *****//
 //*****************//
 
+
 window.onload = function () {
 
-    // Alternative http://stackoverflow.com/questions/18148488/how-can-i-do-a-resolve-with-the-soundcloud-javascript-sdk
-    var songs = {
-        hydrogen: {
-            url: 'http://api.soundcloud.com/tracks/22099269/stream?client_id='+CLIENT_ID,
-            artist: 'M.O.O.N',
-            title: 'Hydrogen'
-        },
-        nightcall: {
-            url: 'http://api.soundcloud.com/tracks/5829554/stream?client_id='+CLIENT_ID,
-            artist: 'Kavinsky',
-            title: 'Nightcall'
-        },
-        brokenSong: {}
-    };
-
-    // curl -v 'http://api.soundcloud.com/resolve?url=https://soundcloud.com/recordmakers/11-kavinsky-nightcall-1&client_id=5c6ceaa17461a1c79d503b345a26a54e'
     var audio = new Audio();
-    //audio.src = songs.nightcall.url;
-    setSong(songs.hydrogen);
+    setSong('https://soundcloud.com/ghostly/com-truise-84-dreamin'); // Set src of audio element to soundcloud stream url
 
     audio.controls = true;
     audio.autoplay = false;
@@ -42,10 +26,12 @@ window.onload = function () {
 
     var context = new (window.AudioContext || window.webkitAudioContext)();
 
+
     window.addEventListener('load', function(e) {
       var source = context.createMediaElementSource(audio);
       source.connect(context.destination);
     }, false);
+
 
 
     var clubber = new Clubber({
@@ -53,7 +39,6 @@ window.onload = function () {
         mute: false // whether the audio source should be connected to web audio context destination.
     });
 
-    // Specify the audio source to analyse. Can be an audio/video element or an instance of AudioNode.
     clubber.listen( audio );
 
     update();
@@ -61,13 +46,10 @@ window.onload = function () {
 
     function update() {
         requestAnimationFrame(update);
-        clubber.update(); // currentTime is optional and specified in ms.
-        //console.log(clubber.notes); // array containing the audio energy per midi note.
+        clubber.update();
 
         uniforms.lfAmp.value = 0;
         uniforms.hfAmp.value = 0;
-
-
 
         for(var i=0; i<clubber.notes.length/2; i++){
             uniforms.hfAmp.value += clubber.notes[i];
@@ -76,94 +58,83 @@ window.onload = function () {
             uniforms.lfAmp.value += clubber.notes[i];
         }
 
-        uniforms.lfAmp.value *= 0.007;
-        uniforms.hfAmp.value *= 0.0007;
+        // Calculate avarage value of lower/upper frequencies and multiply amplitude
+        uniforms.lfAmp.value = 0.5 * uniforms.lfAmp.value/ (clubber.notes.length / 2);
+        uniforms.hfAmp.value = 20 * uniforms.lfAmp.value/ (clubber.notes.length / 2);
+
 
     }
 
 
-    // soundcloud('https://soundcloud.com/recordmakers/11-kavinsky-nightcall-1');
-    //
-    //
-    // // source: https://goo.gl/pV0Aam common.js, #160
-    // function soundcloud(url) {
-    //   load("//api.soundcloud.com/resolve?url=" + encodeURIComponent(url.split("?")[0]) + "&client_id=" + CLIENT_ID).then(function (text) {
-    //     var data = JSON.parse(text);
-    //     console.log(data);
-    //
-    //     /*
-    //     if (data.kind !== "track"){
-    //       alert( "Please provide a track url, " + data.kind + " urls are not supported.");
-    //       return;
-    //
-    //     }
-    //     info.innerHTML = "<a href='"+data.permalink_url+"' target='_blank'>Listening to "+data.title+" by "+data.user.username+"</a>";
-    //     localStorage.setItem("soundcloud-track", url);
-    //     play(data.id);
-    //   }, function () {
-    //     alert(url + " is not a valid soundcloud track url.")
-    //      */
-    //   })
-    // }
-    // function load (url, cb) {
-    //   return new Promise(function (resolve, reject) {
-    //     var xhr = new XMLHttpRequest();
-    //     xhr.open("GET", url);
-    //     xhr.onload = function () {
-    //       if (this.status >= 200 && this.status < 300) {
-    //         resolve(xhr.response);
-    //       } else {
-    //         reject({
-    //           status: this.status,
-    //           statusText: xhr.statusText
-    //         });
-    //       }
-    //       if(cb) {
-    //         cb(this.status);
-    //       }
-    //     };
-    //     xhr.onerror = function () {
-    //       reject({
-    //         status: this.status,
-    //         statusText: xhr.statusText
-    //       });
-    //     };
-    //     xhr.send();
-    //   });
-    // }
 
+    // source: https://goo.gl/pV0Aam common.js, #160
+    function setSong(url) {
+      load("//api.soundcloud.com/resolve?url=" + encodeURIComponent(url.split("?")[0]) + "&client_id=" + CLIENT_ID).then(function (text) {
+        var data = JSON.parse(text);
 
+        if (data.kind !== "track"){
+          alert( "Please provide a track url, " + data.kind + " urls are not supported.");
+          return;
 
-    function setSong(song){
-        if(!song.url || !song.title || !song.artist) {
-            console.error("Incorrect song format");
-            return;
         }
-
-        // Update audio source
-        audio.src = song.url;
+        var streamUrl = 'http://api.soundcloud.com/tracks/'+data.id+'/stream?client_id='+CLIENT_ID;
+        audio.src = streamUrl;
         audio.load();
+        $('#title').text(data.title);
+        $('#artist').text(data.user.username);
+        $('#roll-text > span').text('Now listening to: '+ data.title + " by " + data.user.username);
+        $('#song-marquee > a').attr('href', data.permalink_url);
 
-        // Set title
-        document.getElementById('songTitle').innerHTML = song.artist + ' - ' + song.title;
+      }, function () {
+        alert(url + " is not a valid soundcloud track url.")
 
+      })
     }
+    function load (url, cb) {
+      return new Promise(function (resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url);
+        xhr.onload = function () {
+          if (this.status >= 200 && this.status < 300) {
+            resolve(xhr.response);
+          } else {
+            reject({
+              status: this.status,
+              statusText: xhr.statusText
+            });
+          }
+          if(cb) {
+            cb(this.status);
+          }
+        };
+        xhr.onerror = function () {
+          reject({
+            status: this.status,
+            statusText: xhr.statusText
+          });
+        };
+        xhr.send();
+      });
+    }
+
+
+
+
 
     //*****************//
-    //*** CONTROLS ****//
+    //***** INFO ******//
     //*****************//
     // locate your element and add the Click Event Listener
     document.getElementById("song-dropdown").addEventListener("click",function(e) {
         if(e.target && e.target.nodeName == "A") {
             if(e.target.dataset.url == 'addSong'){
-                alert("Add song");
+                var input = prompt("Please enter soundcloud track url");
+                if(input) setSong(input);
             } else {
-                console.log(songs[e.target.dataset.url]);
-                setSong(songs[e.target.dataset.url]);
+                setSong(e.target.dataset.url);
             }
         }
     });
-
 };
 
 
@@ -336,11 +307,13 @@ function addObjects() {
 
         //Background stars
         var sprite = new THREE.TextureLoader().load( "images/ball.png" );
+        var sc = Math.max(window.innerWidth, window.innerHeight);
+
         planetGeometry = new THREE.Geometry();
 				for ( var i = 0; i < 300; i ++ ) {
 					var planetVertex = new THREE.Vector3();
-					planetVertex.x = (-1 + 2*Math.random())*1.4*window.innerWidth;
-					planetVertex.y = (-1 + 2*Math.random())*1.4*window.innerWidth;
+					planetVertex.x = (-1 + 2*Math.random())*1.4*sc;
+					planetVertex.y = (-1 + 2*Math.random())*1.8*sc;
 					planetVertex.z = -1 * GROUND_DIM / 2 - 600;
 					planetGeometry.vertices.push( planetVertex );
 				}
@@ -380,11 +353,22 @@ function updateObjects() {
         // Background
         bgMaterial.color.r = 0.01 + 0.5*uniforms.lfAmp.value/255;
         bgMaterial.color.g = 0.04 + 0.2*uniforms.lfAmp.value/255;
-        bgMaterial.color.b = 0.08 + 0.2*uniforms.lfAmp.value/255;
+        bgMaterial.color.b = 0.08 + 0.7*uniforms.lfAmp.value/255;
 
         // Camera
         camera.position.y = 0.6 * uniforms.lfAmp.value;
         camera.position.x = 20*Math.sin(time+0.05*uniforms.lfAmp.value);
+
+        // Song title
+        //text-shadow: 0 0 3px rgba(255,0,255,1.0);
+
+        var blur = uniforms.lfAmp.value/255 * 100;
+        var elems = document.getElementsByClassName('songTitle');
+        for (var i = 0; i < elems.length; i++) {
+                elems[i].style.textShadow = "0 0 " + blur + "px #FF00FF";
+        }
+
+
 }
 
 
@@ -407,7 +391,7 @@ function render() {
         time = (new Date().getTime() - startTime) / 1000;
 
         // update camera controls
-        cameraControls.update();
+        //cameraControls.update();
 
         // Update uniforms
         uniforms.time.value = time;

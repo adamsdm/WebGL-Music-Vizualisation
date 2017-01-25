@@ -3,6 +3,12 @@
     src: url(lazer.ttf);
 }
 
+@font-face {
+    font-family: outrun;
+    src: url(outrun.otf);
+}
+
+
 body {
     overflow: hidden;
     padding: 0;
@@ -50,21 +56,94 @@ audio{
     right: 5px;
 }
 
-#songTitle {
-	font-size: 70px;
-    font-family: lazer;
-    color: #4D66FF;
+/* Make it a marquee */
+.marquee {
+    width: 100%;
+    margin: 0 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+}
 
-    /*text-shadow: #EEEE00 0 0 10px, #FF0000 5px 5px 0px;*/
-    background: -webkit-linear-gradient(#FF00FF, #4D66FF);
+.marquee span {
+    display: inline-block;
+    padding-left: 100%;
+    text-indent: 0;
+    animation: marquee 10s linear infinite;
+}
+
+
+/* Make it move */
+@keyframes marquee {
+    0%   { transform: translate(0, 0); }
+    100% { transform: translate(-100%, 0); }
+}
+
+#song-marquee{
+    font-size: 18px;
+    color: #FF00FF;
+    z-index: 9999;
+    position: absolute;
+    top: 20px;
+    right: 16px;
+    width:220px;
+    border: 2px solid gray;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.4);
+}
+
+#song-marquee:hover{
+    background-color: rgba(100,100,100,0.5);
+}
+
+#song-marquee p{
+    color: gray;
+    margin: 0px;
+    padding: 12px;
+}
+#song-marquee img{
+    padding: 4px;
+}
+
+#song-marquee a{
+    text-decoration: none;
+}
+#song-marquee a:visited {
+    color: gray;
+}
+#song-marquee a:hover {
+    color: gray;
+}
+#song-marquee a:active{
+    color: gray;
+}
+
+
+
+.songTitle {
+    font-family: lazer;
+    color: #FF00FF;
+    /*
+    background-image: -webkit-linear-gradient(#4D66FF, #4D66FF, #FF00FF);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    */
 }
+
+h2{
+    color: #4D66FF !important;
+    font-family: outrun !important;
+}
+
 
 #controls {
     position:absolute;
     top: 20px;
     left: 10px;
+}
+
+#controls #add-url {
+    border-top: 2px solid gray;
 }
 
 
@@ -103,15 +182,18 @@ audio{
 }
 
 /* Dropdown Content (Hidden by Default) */
+
 .dropdown-content {
-    display: none;
     position: absolute;
+    display: none;
     border: 2px solid gray;
     border-top-width: 0px;
     border-radius: 0px 0px 10px 10px;
     min-width: 156px;
     transition: 0.2s linear;
     background-color: rgba(100,100,100,0.5);
+    overflow: hidden;
+
 
 }
 
