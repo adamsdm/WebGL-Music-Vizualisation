@@ -11,6 +11,14 @@ i{
     position: fixed;
     opacity:0.1;
 }
+#time{
+    color: white;
+    font-size: 80px;
+    position: absolute;
+    right: 100px;
+    top: 0px;
+     -webkit-filter: blur(1px);
+}
 
 .load-screen{
   position:relative;
