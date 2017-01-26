@@ -1,0 +1,111 @@
+i{
+  color: white;
+}
+#scanlines{
+    opacity:0.1;
+}
+#load-bg{
+    background-image: url("http://data.whicdn.com/images/135444636/large.jpg");
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    opacity:0.1;
+}
+
+.load-screen{
+  position:relative;
+  color: #000;
+  width:100vw;
+  height:100vh;
+  background-color:blue;
+  overflow:hidden;
+  z-index: 9997;
+}
+
+.load-screen span{
+    padding: 100px;
+  position:absolute;
+  text-align: center;
+  -webkit-filter: blur(1px);
+  font-size:80px;
+  font-family:'Courier new', fixed;
+  font-weight:bold;
+}
+.load-screen span:nth-child(1){
+  color:white;
+  margin-left:-2px;
+  -webkit-filter: blur(2px);
+}
+.load-screen span:nth-child(2){
+  color:green;
+  margin-left:2px;
+  -webkit-filter: blur(2px);
+}
+.load-screen span:nth-child(3){
+  color:blue;
+  position:20px 0;
+  -webkit-filter: blur(1px);
+}
+.load-screen span:nth-child(4){
+  color:#fff;
+  -webkit-filter: blur(1px);
+  text-shadow:0 0 50px rgba(255,255,255,0.4);
+}
+.load-screen span:nth-child(5){
+  color:rgba(255,255,255,0.4);
+  -webkit-filter: blur(15px);
+}
+
+.load-screen span{
+  -webkit-animation: blur 30ms infinite, jerk 50ms infinite;
+}
+
+@-webkit-keyframes blur {
+  0%   { -webkit-filter: blur(1px); opacity:0.8;}
+  50% { -webkit-filter: blur(1px); opacity:1; }
+  100%{ -webkit-filter: blur(1px); opacity:0.8; }
+}
+@-webkit-keyframes jerk {
+  50% { left:1px; }
+  51% { left:0; }
+}
+@-webkit-keyframes jerkup {
+  50% { top:1px; }
+  51% { top:0; }
+}
+
+.load-screen span:nth-child(3){
+  -webkit-animation: jerkblue 1s infinite;
+}
+@-webkit-keyframes jerkblue {
+  0% { left:0; }
+  30% { left:0; }
+  31% { left:10px; }
+  32% { left:0; }
+  98% { left:0; }
+  100% { left:10px; }
+}
+.load-screen span:nth-child(2){
+  -webkit-animation: jerkgreen 1s infinite;
+}
+@-webkit-keyframes jerkgreen {
+  0% { left:0; }
+  30% { left:0; }
+  31% { left:-10px; }
+  32% { left:0; }
+  98% { left:0; }
+  100% { left:-10px; }
+}
+
+.load-screen .text{
+  -webkit-animation: jerkwhole 5s infinite;
+  position:relative;
+}
+@-webkit-keyframes jerkwhole {
+  30% {  }
+  40% { opacity:1; top:0; left:0;  -webkit-transform:scale(1,1);  -webkit-transform:skew(0,0);}
+  41% { opacity:0.8; top:0px; left:-100px; -webkit-transform:scale(1,1.2);  -webkit-transform:skew(50deg,0);}
+  42% { opacity:0.8; top:0px; left:100px; -webkit-transform:scale(1,1.2);  -webkit-transform:skew(-80deg,0);}
+  43% { opacity:1; top:0; left:0; -webkit-transform:scale(1,1);  -webkit-transform:skew(0,0);}
+  65% { }
+}

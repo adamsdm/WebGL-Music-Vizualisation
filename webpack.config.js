@@ -1,7 +1,7 @@
 module.exports = {
   //define entry point
   entry: {
-      'app': "./src/app.js"
+      'app': ["./src/loading.js", "./src/app.js"]
   },
 
   //define outout point

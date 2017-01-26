@@ -82,7 +82,7 @@ audio{
 #song-marquee{
     font-size: 18px;
     color: #FF00FF;
-    z-index: 9999;
+    z-index: 9990;
     position: absolute;
     top: 20px;
     right: 16px;
