@@ -14,6 +14,7 @@ $(document).ready(function() {
         setTimeout(function(){
         $(".load-text").css("display", "none");
         $("#play").css("display", "inherit");
+        $('#time').text("00:00:00");
     }, 1000);
 
     $("#play").click(function() {

@@ -16,8 +16,23 @@ i{
     font-size: 80px;
     position: absolute;
     right: 100px;
-    top: 0px;
-     -webkit-filter: blur(1px);
+    top: 23px;
+    -webkit-filter: blur(1px);
+    -webkit-animation: jerktime 50ms infinite
+}
+#play {
+    font-family: monospace;
+    color:white;
+    text-decoration: none;
+}
+
+@-webkit-keyframes jerktime {
+  30% {  }
+  40% { opacity:1; -webkit-transform:scale(1,1);  -webkit-transform:skew(0,0);}
+  41% { opacity:0.8;  -webkit-transform:scale(1,1.2);  -webkit-transform:skew(50deg,0);}
+  42% { opacity:0.8;  -webkit-transform:scale(1,1.2);  -webkit-transform:skew(-80deg,0);}
+  43% { opacity:1;  -webkit-transform:scale(1,1);  -webkit-transform:skew(0,0);}
+  65% { }
 }
 
 .load-screen{
@@ -25,7 +40,7 @@ i{
   color: #000;
   width:100vw;
   height:100vh;
-  background-color:blue;
+  background-color: darkblue;
   overflow:hidden;
   z-index: 9997;
 }
