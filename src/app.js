@@ -80,6 +80,7 @@ window.onload = function () {
         var streamUrl = 'http://api.soundcloud.com/tracks/'+data.id+'/stream?client_id='+CLIENT_ID;
         audio.src = streamUrl;
         audio.load();
+
         $('#title').text(data.title);
         $('#artist').text(data.user.username);
         $('#roll-text > span').text('Now listening to: '+ data.title + " by " + data.user.username);
@@ -87,7 +88,6 @@ window.onload = function () {
 
       }, function () {
         alert(url + " is not a valid soundcloud track url.")
-
       })
     }
     function load (url, cb) {
